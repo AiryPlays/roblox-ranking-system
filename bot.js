@@ -16,13 +16,13 @@ const fetch = require('node-fetch');
 
 const SYSTEM_CONFIG = {
     // Bot Authentication
-    ROBLOX_COOKIE: process.env.ROBLOX_COOKIE || 'YOUR_BOT_COOKIE_HERE',
+    ROBLOX_COOKIE: process.env.ROBLOX_COOKIE || '_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_CAEaAhADIhsKBGR1aWQSEzgzMzY5Njk4NzUyMjM1MjE2OTEoAw.LMSRyAYZqKQkq8ybXHHrzmNnE1Q-Mj2WQ08YC-FefqSWt7SMAjciTisnq1szrhfCbFdUv0tE-pBl7wTZ1z3yaogbt9aOsMPZnq9drVWsbrvKUrSzom-oat7yt2ZcZAgQPNaZQ40HyaR7JNquVjtzYv4FH_2NLNTtO-Q-A2pEYfw28l9u9ZCjcKJXBU-qzOf_lI4e6XnF5mIW80RXWPhCJXNZgkz8HCync5knZmmlfw5bhBuC7mN5jmPiVvapKuNc0aHaf6CyUaZJ3M1cJ4Hz2d37EiHXR48T28DNs418lfma3JKSAFjtB10XcasvFLkTPulGEQXvknjK2Ku5fPoEZEAL2SzjS-DE49TFcOd09AE_hUyk404DqPbrPfTBy3QIjekQx-9vsTezh7AIw2HLHKjYu7athQ1L-_Yf5-o0xoOgJUwzkmahjAmxxDs0dpJ22ZnCzPHor3mziaTl-ipZzAXEDB8p8ohGk6VRoyE_r2nr6dl8Kx9Mo6DjRKWX5B1iwfMVefLvJQBDKzbtNH7_048vAjD3jqNNoFHrt53I8h9Ykslp7R7smqGeXLl7Q6Qff7-Le_e385klDk2NS_XWRN9sKm30JmO4R1rtWqsMJAcVQS17SfrqMn_vEy6d6UxOYN6XHfQeCXqVWIL9U_HCSfa0NR_4HMk-lxVniYgPjcBlIBKsawLvj9pYuGfisUxJNikNEqf9cd6PsVgQq9iI8gJ-joCr9sLTnhKefPfnJ0pMQ_Ivvf5V63LxTqnGebD4uOhpo5qrm9-OH_rCNeiI8Kc74j4bYycR5ehkuLlUS2lAqkl3',
     
     // Group Configuration
-    GROUP_ID: parseInt(process.env.GROUP_ID) || 12345678,
+    GROUP_ID: parseInt(process.env.GROUP_ID) || 32409210,
     
     // Discord Integration
-    DISCORD_WEBHOOK_URL: process.env.DISCORD_WEBHOOK || 'YOUR_WEBHOOK_URL_HERE',
+    DISCORD_WEBHOOK_URL: process.env.DISCORD_WEBHOOK || 'https://discord.com/api/webhooks/1456420026138624031/q1zjZ_dbPstCNERdl2SEja6Dj6K9yMNiSkgEmbsrbMave91BxICuEZMGYnJCP1xY_s_t',
     
     // System Parameters
     POLLING_INTERVAL: 60000, // Transaction monitoring interval (ms)
@@ -50,17 +50,17 @@ const SYSTEM_CONFIG = {
 const PRODUCT_CATALOG = [
     // Auto-Ranking Products
     {
-        id: 11111111,
-        name: 'Bronze Tier Access',
-        type: 'GamePass',
-        rank: 5,
+        id: 130464502709529,
+        name: 'RYANAIR LLC || Plus',
+        type: 'Asset',
+        rank: 2,
         color: '#CD7F32'
     },
     {
-        id: 22222222,
-        name: 'Silver Tier Access',
-        type: 'GamePass',
-        rank: 10,
+        id: 111348983052312,
+        name: 'Ryanair LLC || Flexi Plus',
+        type: 'Asset',
+        rank: 3,
         color: '#C0C0C0'
     },
     {
