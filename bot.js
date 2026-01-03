@@ -2,6 +2,173 @@ const noblox = require('noblox.js');
 const fetch = require('node-fetch');
 
 /**
+ * Send bot status embed
+ * @param {string} status - Status type ('deployed' or 'running')
+ * @param {Object} additionalInfo - Additional information to include
+ */
+async function sendBotStatusEmbed(status, additionalInfo = {}) {
+    try {
+        const isDeployed = status === 'deployed';
+        
+        const embed = {
+            title: isDeployed ? '🚀 BOT DEPLOYED' : '✅ BOT RUNNING',
+            description: isDeployed 
+                ? 'Corporate Ranking System has been successfully deployed and is now active.'
+                : 'Corporate Ranking System is operational and monitoring transactions.',
+            color: isDeployed ? 0x00FF00 : 0x3498db,
+            fields: [
+                {
+                    name: '📊 System Status',
+                    value: `**Status:** Online\n**Monitoring:** Active\n**Products Tracked:** ${PRODUCT_CATALOG.length}`,
+                    inline: true
+                },
+                {
+                    name: '📈 Session Statistics',
+                    value: `**Transactions Processed:** ${systemMetrics.transactionsProcessed}\n**Rankings Executed:** ${systemMetrics.rankingsExecuted}\n**Notifications Sent:** ${systemMetrics.notificationsSent}`,
+                    inline: true
+                },
+                {
+                    name: '⚙️ Configuration',
+                    value: `**Group ID:** ${SYSTEM_CONFIG.GROUP_ID}\n**Polling Interval:** ${SYSTEM_CONFIG.POLLING_INTERVAL / 1000}s\n**Status Check:** ${isDeployed ? 'Initial' : 'Every 24h'}`,
+                    inline: false
+                }
+            ],
+            footer: {
+                text: isDeployed ? 'System initialized successfully' : 'Automatic status check',
+                icon_url: 'https://cdn.discordapp.com/emojis/1234567890.png'
+            },
+            timestamp: new Date().toISOString()
+        };
+
+        // Add uptime for running status
+        if (!isDeployed && additionalInfo.uptime) {
+            embed.fields.push({
+                name: '⏱️ Uptime',
+                value: additionalInfo.uptime,
+                inline: true
+            });
+        }
+
+        const payload = {
+            embeds: [embed],
+            username: 'Transaction Monitor',
+            avatar_url: 'https://cdn.discordapp.com/embed/avatars/0.png'
+        };
+
+        const response = await fetch(SYSTEM_CONFIG.DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            console.log(`[STATUS] ✅ ${isDeployed ? 'Deployment' : 'Status'} notification sent`);
+        } else {
+            console.error(`[STATUS] ❌ Status notification failed with status: ${response.status}`);
+        }
+    } catch (error) {
+        console.error(`[STATUS] ❌ Failed to send status notification: ${error.message}`);
+    }
+}
+
+/**
+ * Calculate uptime string
+ * @param {number} startTime - Bot start timestamp
+ * @returns {string} Formatted uptime
+ */
+function getUptimeString(startTime) {
+    const uptime = Date.now() - startTime;
+    const days = Math.floor(uptime / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((uptime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((uptime % (1000 * 60 * 60)) / (1000 * 60));
+    
+    return `${days}d ${hours}h ${minutes}m`;
+}
+
+/**
+ * Send test embed for new product
+ * @param {Object} product - Product configuration
+ */
+async function sendTestProductEmbed(product) {
+    try {
+        const embed = {
+            title: '🆕 New Product Added to Catalog',
+            color: parseInt(product.color?.replace('#', '0x') || '0x5865F2'),
+            thumbnail: {
+                url: 'https://cdn.discordapp.com/attachments/123456789/test-product.png'
+            },
+            fields: [
+                {
+                    name: '📦 Product Information',
+                    value: `**Name:** ${product.name}\n**Type:** ${product.type}\n**Product ID:** ${product.id}`,
+                    inline: false
+                },
+                {
+                    name: '⚙️ Configuration',
+                    value: product.rank 
+                        ? `**Auto-Ranking:** Enabled\n**Target Rank:** ${product.rank}\n**Status:** Active`
+                        : `**Auto-Ranking:** Disabled\n**Tracking Mode:** Enabled\n**Status:** Active`,
+                    inline: false
+                },
+                {
+                    name: '🎨 Embed Color',
+                    value: `${product.color || '#5865F2'}`,
+                    inline: true
+                },
+                {
+                    name: '🕒 Added At',
+                    value: `<t:${Math.floor(Date.now() / 1000)}:F>`,
+                    inline: true
+                }
+            ],
+            footer: {
+                text: 'This is a test embed - System is now monitoring this product',
+                icon_url: 'https://cdn.discordapp.com/emojis/1234567890.png'
+            },
+            timestamp: new Date().toISOString()
+        };
+
+        const payload = {
+            embeds: [embed],
+            username: 'Transaction Monitor',
+            avatar_url: 'https://cdn.discordapp.com/embed/avatars/0.png'
+        };
+
+        const response = await fetch(SYSTEM_CONFIG.DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            console.log(`[TEST] ✅ Test embed sent for new product: ${product.name}`);
+        } else {
+            console.error(`[TEST] ❌ Test embed failed with status: ${response.status}`);
+        }
+    } catch (error) {
+        console.error(`[TEST] ❌ Failed to send test embed: ${error.message}`);
+    }
+}
+
+/**
+ * Check for new products and send test embeds
+ */
+async function checkForNewProducts() {
+    for (const product of PRODUCT_CATALOG) {
+        const productKey = `${product.id}-${product.name}`;
+        
+        if (!knownProducts.has(productKey)) {
+            console.log(`[CATALOG] 🆕 New product detected: ${product.name} (ID: ${product.id})`);
+            await sendTestProductEmbed(product);
+            knownProducts.add(productKey);
+            
+            // Small delay between multiple new products
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+    }
+}
+
+/**
  * ========================================
  * CORPORATE AUTOMATED RANKING SYSTEM
  * ========================================
@@ -50,17 +217,17 @@ const SYSTEM_CONFIG = {
 const PRODUCT_CATALOG = [
     // Auto-Ranking Products
     {
-        id: 130464502709529,
-        name: 'RYANAIR LLC || Plus',
-        type: 'Asset',
-        rank: 2,
+        id: 11111111,
+        name: 'Bronze Tier Access',
+        type: 'GamePass',
+        rank: 5,
         color: '#CD7F32'
     },
     {
-        id: 111348983052312,
-        name: 'Ryanair LLC || Flexi Plus',
-        type: 'Asset',
-        rank: 3,
+        id: 22222222,
+        name: 'Silver Tier Access',
+        type: 'GamePass',
+        rank: 10,
         color: '#C0C0C0'
     },
     {
@@ -96,6 +263,8 @@ const PRODUCT_CATALOG = [
 // ==================== SYSTEM STATE ====================
 
 let processedTransactions = new Set();
+let knownProducts = new Set();
+let botStartTime = Date.now();
 let systemMetrics = {
     transactionsProcessed: 0,
     rankingsExecuted: 0,
@@ -444,6 +613,13 @@ async function main() {
     });
     console.log('');
 
+    // Check for new products and send test embeds
+    await checkForNewProducts();
+
+    // Send deployment notification
+    console.log('[STATUS] 📢 Sending deployment notification...');
+    await sendBotStatusEmbed('deployed');
+
     // Perform initial scan
     await performInitialScan();
 
@@ -451,6 +627,15 @@ async function main() {
     console.log('[SYSTEM] 🚀 Transaction monitoring active...\n');
     pollGroupRevenue(); // Initial poll
     setInterval(pollGroupRevenue, SYSTEM_CONFIG.POLLING_INTERVAL);
+    
+    // Check for new products every 5 minutes
+    setInterval(checkForNewProducts, 300000);
+
+    // Send "BOT RUNNING" status every 24 hours
+    setInterval(() => {
+        const uptime = getUptimeString(botStartTime);
+        sendBotStatusEmbed('running', { uptime });
+    }, 86400000); // 24 hours in milliseconds
 
     // Display metrics every 10 minutes
     setInterval(displaySystemMetrics, 600000);
